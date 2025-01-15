@@ -39,19 +39,14 @@
 </head>
 <body>
     <h1>Добро пожаловать в СГТК ЛИБ!</h1>
-    <!-- <div class="button-container">
-        <button class="button" onclick="window.location.href='{{ url_for('book_arrival') }}'">Приход книг</button>
-        <button class="button" onclick="window.location.href='{{ url_for('book_retirement') }}'">Выбыте книг</button>
-        <button class="button" onclick="window.location.href='{{ url_for('fund_movements') }}'">Итоги движения фонда</button>
-        <button class="button" onclick="window.location.href='{{ url_for('fund_receipt') }}'">Поступление в фонд</button>
-        <button class="button" onclick="window.location.href='{{ url_for('handbook') }}'">Справочник </button>
-        <button class="button" onclick="window.location.href='{{ url_for('inventory_book') }}'">Инвентарная книга</button>
-        <button class="button" onclick="window.location.href='{{ url_for('lib_record') }}'">Ведомость учёта библиотечного фонда</button>
-        <button class="button" onclick="window.location.href='{{ url_for('library_catalog') }}'">Библиотечный каталог</button>
-        <button class="button" onclick="window.location.href='{{ url_for('magazine_catalog') }}'">Каталог журналов и газет</button>
-        <button class="button" onclick="window.location.href='{{ url_for('reader_description') }}'">Читатели</button>
+    <div class="button-container">
 
-    </div> -->
+        <button class="button" onclick="window.location.href='./pages/handbook'">Справочник </button>
+        <button class="button" onclick="window.location.href='pages/library_catalog.php'">Библиотечный каталог</button>
+        <button class="button" onclick="window.location.href='./pages/magazine_catalog'">Каталог журналов и газет</button>
+        <button class="button" onclick="window.location.href='pages/reader_description.html'">Читатели</button>
+
+    </div>
     <script src="{{ url_for('static', filename='index.js') }}"></script>
 </body>
 </html>

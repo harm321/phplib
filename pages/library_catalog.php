@@ -51,7 +51,10 @@
                 <h1 id="header-title">Библиотечный каталог</h1>
                 <p id="header-subtitle">N книг</p>
             </div>
-
+            <button class="button-action add-book-btn"><img src=" "
+                            alt="Иконка добавления читателя" class="button-icon">Добавить новую запись</button>
+            <button class="button-action export-btn"><img src=" " alt="Иконка экспорта"
+                            class="button-icon">Экспортировать</button>
             <div class="table-container">
                 <table>
                     <thead>
@@ -105,89 +108,88 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <?php
-                        include 'php/db.php'; // Подключение к базе данных
+                    <?php
+                    include '../php/db.php'; // Подключение к базе данных
 
-                        // Запрос на получение данных
-                        $sql = "SELECT * FROM books"; // Замените 'books' на имя вашей таблицы
-                        $stmt = $conn->prepare($sql);
-                        $stmt->execute();
+                    // Запрос на получение данных
+                    $sql = "SELECT * FROM Books";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->execute();
 
-                        // Проверка наличия данных
-                        if ($stmt->rowCount() > 0) {
-                            // Вывод данных каждой строки
-                            while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                                echo "<tr>
-                                        <td class='fixed-checkbox'><input type='checkbox' class='row-checkbox'></td>
-                                        <td>{$row['inventory_number']}</td>
-                                        <td>{$row['inventory_date']}</td>
-                                        <td>{$row['publication_type']}</td>
-                                        <td>{$row['authors']}</td>
-                                        <td>{$row['second_author']}</td>
-                                        <td>{$row['third_author']}</td>
-                                        <td>{$row['responsibility_info']}</td>
-                                        <td>{$row['title']}</td>
-                                        <td>{$row['title_related_info']}</td>
-                                        <td>{$row['publication_info']}</td>
-                                        <td>{$row['series']}</td>
-                                        <td>{$row['material_type']}</td>
-                                        <td>{$row['publication_place']}</td>
-                                        <td>{$row['publisher']}</td>
-                                        <td>{$row['year_of_publication']}</td>
-                                        <td>{$row['page_count']}</td>
-                                        <td>{$row['printed_sheets']}</td>
-                                        <td>{$row['mark']}</td>
-                                        <td>{$row['isbn']}</td>
-                                        <td>{$row['country']}</td>
-                                        <td>{$row['copies']}</td>
-                                        <td>{$row['price']}</td>
-                                        <td>{$row['edition_copies']}</td>
-                                        <td>{$row['category']}</td>
-                                        <td>{$row['keywords']}</td>
-                                        <td>{$row['bbk_index']}</td>
-                                        <td>{$row['udc_index']}</td>
-                                        <td>{$row['grnti_index']}</td>
-                                        <td>{$row['author_sign']}</td>
-                                        <td>{$row['language']}</td>
-                                        <td>{$row['summary']}</td>
-                                        <td>{$row['notes']}</td>
-                                        <td>{$row['illustrations']}</td>
-                                        <td>{$row['binding']}</td>
-                                        <td>{$row['verification_mark_1']}</td>
-                                        <td>{$row['verification_mark_2']}</td>
-                                        <td>{$row['verification_mark_3']}</td>
-                                        <td>{$row['sigla']}</td>
-                                        <td>{$row['organization_name']}</td>
-                                        <td>{$row['html_link']}</td>
-                                        <td>{$row['physical_characteristics']}</td>
-                                        <td>{$row['system_requirements']}</td>
-                                        <td class='fixed-menu'>
-                                            <button class='menu-btn'>
-                                                <img src='./img/library-dashboard/menu-ico.svg' alt='Меню' class='menu-icon' title='Меню'>
+                    // Проверка наличия данных
+                    if ($stmt->rowCount() > 0) {
+                        // Вывод данных каждой строки
+                        while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                            echo "<tr>
+                                    <td class='fixed-checkbox'><input type='checkbox' class='row-checkbox'></td>
+                                    <td>{$row['inventory_number']}</td>
+                                    <td>{$row['inventory_date']}</td>
+                                    <td>{$row['publication_type']}</td>
+                                    <td>{$row['authors']}</td>
+                                    <td>{$row['second_author']}</td>
+                                    <td>{$row['third_author']}</td>
+                                    <td>{$row['responsibility_info']}</td>
+                                    <td>{$row['title']}</td>
+                                    <td>{$row['title_related_info']}</td>
+                                    <td>{$row['publication_info']}</td>
+                                    <td>{$row['series']}</td>
+                                    <td>{$row['material_type']}</td>
+                                    <td>{$row['publication_place']}</td>
+                                    <td>{$row['publisher']}</td>
+                                    <td>{$row['year_of_publication']}</td>
+                                    <td>{$row['page_count']}</td>
+                                    <td>{$row['printed_sheets']}</td>
+                                    <td>{$row['mark']}</td>
+                                    <td>{$row['isbn']}</td>
+                                    <td>{$row['country']}</td>
+                                    <td>{$row['copies']}</td>
+                                    <td>{$row['price']}</td>
+                                    <td>{$row['edition_copies']}</td>
+                                    <td>{$row['category']}</td>
+                                    <td>{$row['keywords']}</td>
+                                    <td>{$row['bbk_index']}</td>
+                                    <td>{$row['udc_index']}</td>
+                                    <td>{$row['grnti_index']}</td>
+                                    <td>{$row['author_sign']}</td>
+                                    <td>{$row['language']}</td>
+                                    <td>{$row['summary']}</td>
+                                    <td>{$row['notes']}</td>
+                                    <td>{$row['illustrations']}</td>
+                                    <td>{$row['binding']}</td>
+                                    <td>{$row['verification_mark_1']}</td>
+                                    <td>{$row['verification_mark_2']}</td>
+                                    <td>{$row['verification_mark_3']}</td>
+                                    <td>{$row['sigla']}</td>
+                                    <td>{$row['organization_name']}</td>
+                                    <td>{$row['html_link']}</td>
+                                    <td>{$row['physical_characteristics']}</td>
+                                    <td>{$row['system_requirements']}</td>
+                                    <td class='fixed-menu'>
+                                        <button class='menu-btn'>
+                                            <img src='./img/library-dashboard/menu-ico.svg' alt='Меню' class='menu-icon' title='Меню'>
+                                        </button>
+                                        <div class='menu-options'>
+                                            <button class='menu-icon-btn edit-btn'>
+                                                <img src='' alt='Редактировать' class='menu-icon' title='Редактировать'>
                                             </button>
-                                            <div class='menu-options'>
-                                                <button class='menu-icon-btn edit-btn'>
-                                                    <img src='./img/library-dashboard/edit-ico.svg' alt='Редактировать' class='menu-icon' title='Редактировать'>
-                                                </button>
-                                                <button class='menu-icon-btn delete-btn'>
-                                                    <img src='./img/library-dashboard/delete-ico.svg' alt='Удалить' class='menu-icon' title='Удалить'>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>";
-                            }
-                        } else {
-                            echo "<tr><td colspan='38'>Нет данных</td></tr>";
+                                            <button class='menu-icon-btn delete-btn'>
+                                                <img src='' alt='Удалить' class='menu-icon' title='Удалить'>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>";
                         }
-                        ?>
+                    } else {
+                        echo "<tr><td colspan='38'>Нет данных</td></tr>";
+                    }
+                    ?>
                     </tbody>
                 </table>
             </div>
         </main>
     </div>
-    <script src="assets/js/database-handler.js"></script>
-    <script src="assets/js/ui-handler.js"></script>
-    <script src="{{ url_for('static', filename='library_catalog.js') }}"></script>
 </body>
+    <script src=""></script>
+
 
 </html>
