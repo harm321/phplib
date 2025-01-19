@@ -24,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $sql = "DELETE FROM `$table` WHERE id = :id";
     $stmt = $conn->prepare($sql);
 
-    // Выполняем запрос, передавая параметр через bindParam
+    // Выполняем запрос
     $stmt->bindParam(':id', $id, PDO::PARAM_INT);
 
     if ($stmt->execute()) {

@@ -36,7 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     // Формируем SQL-запрос
     $sql = "INSERT INTO `$table` (" . implode(", ", array_keys($data)) . ") VALUES (" . implode(", ", $placeholders) . ")";
-    $stmt = $conn->prepare($sql); // Заменяем $pdo на $conn
+    $stmt = $conn->prepare($sql); 
 
     // Выполняем запрос
     if ($stmt->execute($data)) {
