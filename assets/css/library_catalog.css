@@ -311,7 +311,7 @@ tr {
     }
 }
 
-.modal {
+#modal {
     display: none;
     position: fixed;
     z-index: 1000;
@@ -370,7 +370,7 @@ tr {
     border-radius: 4px;
 }
 
-.submit-btn {
+.submit {
     background-color: #4CAF50;
     color: white;
     padding: 10px 20px;
@@ -380,7 +380,7 @@ tr {
     float: right;
 }
 
-.submit-btn:hover {
+.submit:hover {
     background-color: #45a049;
 }
 
@@ -423,6 +423,7 @@ textarea {
 }
 
 .menu-btn {
+
     background: transparent;
     border: none;
     cursor: pointer;
@@ -446,8 +447,6 @@ textarea {
 }
 
 .menu-options button {
-    display: block;
-    width: 100%;
     background: none;
     border: none;
     cursor: pointer;
@@ -506,6 +505,7 @@ table tbody tr:hover {
 
 .edit-btn,
 .delete-btn {
+
     background-color: transparent;
     border: none;
     cursor: pointer;
@@ -674,6 +674,7 @@ th[data-column]:hover {
 }
 
 .menu-icon {
+
     width: 20px;
     height: 20px;
 }
@@ -693,7 +694,7 @@ th[data-column]:hover {
     border: none;
     padding: 8px;
     cursor: pointer;
-    width: 100%;
+
     display: flex;
     align-items: center;
     justify-content: center;
@@ -707,7 +708,7 @@ th[data-column]:hover {
     display: none;
     position: absolute;
     top: 0;
-    right: 70px;
+    left: 20px;
     background: #fff;
     border: 1px solid #ddd;
     border-radius: 5px;
