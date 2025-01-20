@@ -1,141 +1,179 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const modal = document.getElementById("modal");
-    const addBookForm = document.getElementById("addBookForm");
-    const openBtn = document.querySelector(".add-book-btn");
-    const closeBtn = document.querySelector(".close");
-    let isEditMode = false;
-    let editRecordId = null;
+    const addModal = document.getElementById("addModal"); // Модальное окно добавления
+    const editModal = document.getElementById("editModal"); // Модальное окно редактирования
+    const addBookForm = document.getElementById("addBookForm"); // Форма добавления
+    const editBookForm = document.getElementById("editBookForm"); // Форма редактирования
+    const openAddBtn = document.querySelector(".add-book-btn"); // Кнопка для открытия окна добавления
+    const closeBtns = document.querySelectorAll(".close"); // Кнопки закрытия окон
+    let editRecordId = null; // Переменная для хранения ID редактируемой записи
+
+    // Универсальная функция для открытия окна
+    function openModal(modal) {
+        modal.style.display = "block";
+    }
+
+    // Универсальная функция для закрытия окна
+    function closeModal(modal) {
+        modal.style.display = "none";
+        editRecordId = null; // Сброс ID записи
+    }
 
     // Открытие окна для добавления
-    openBtn.addEventListener("click", function () {
-        isEditMode = false;
-        editRecordId = null;
-        addBookForm.reset();
-        modal.style.display = "block";
+    openAddBtn.addEventListener("click", function () {
+        addBookForm.reset(); // Сброс формы
+        openModal(addModal); // Открываем окно добавления
     });
 
-    // Закрытие окна
-    closeBtn.addEventListener("click", function () {
-        modal.style.display = "none";
+    // Закрытие окон по кнопке
+    closeBtns.forEach((btn) =>
+        btn.addEventListener("click", function () {
+            closeModal(addModal);
+            closeModal(editModal);
+        })
+    );
+
+    // Закрытие окна по клику вне его
+    window.addEventListener("click", (event) => {
+        if (event.target === addModal) closeModal(addModal);
+        if (event.target === editModal) closeModal(editModal);
     });
 
-    // Закрытие по клику вне окна
-    window.addEventListener("click", function (event) {
-        if (event.target === modal) {
-            modal.style.display = "none";
+    // Обработка меню
+    document.addEventListener("click", function (e) {
+        if (e.target.closest(".menu-btn")) {
+            const menuOptions = e.target.closest(".menu-btn").nextElementSibling;
+            toggleMenu(menuOptions);
+        } else if (!e.target.closest(".menu-options")) {
+            closeAllMenus();
         }
     });
 
-    // Обработка меню для каждой записи с делегированием событий
-    document.addEventListener('click', function(e) {
-        if (e.target.closest('.menu-btn')) {
-            e.stopPropagation();
-            document.querySelectorAll('.menu-options').forEach(menu => {
-                if (menu !== e.target.closest('.menu-btn').nextElementSibling) {
-                    menu.style.display = 'none';
-                }
-            });
-
-            const menuOptions = e.target.closest('.menu-btn').nextElementSibling;
-            menuOptions.style.display = menuOptions.style.display === 'block' ? 'none' : 'block';
-        } else if (!e.target.closest('.menu-options')) {
-            document.querySelectorAll('.menu-options').forEach(menu => {
-                menu.style.display = 'none';
-            });
-        }
-    });
-
-    // Удаление записи с делегированием
-    document.addEventListener('click', function (e) {
-        if (e.target.classList.contains('delete-btn')) {
-            const id = e.target.getAttribute('data-id');
-            const table = 'books';
-
-            if (!confirm("Вы уверены, что хотите удалить эту запись?")) {
-                return;
+    function toggleMenu(menuOptions) {
+        document.querySelectorAll(".menu-options").forEach((menu) => {
+            if (menu !== menuOptions) {
+                menu.style.display = "none";
             }
+        });
+        menuOptions.style.display =
+            menuOptions.style.display === "block" ? "none" : "block";
+    }
 
-            fetch("../php/delete_data.php", {
-                method: "POST",
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: new URLSearchParams({ table: table, id: id })
-            })
-            .then(response => response.text())
-            .then(data => {
-                alert(data);
-                location.reload();
-            })
-            .catch(error => {
-                console.error("Ошибка:", error);
-                alert("Произошла ошибка при удалении.");
-            });
+    function closeAllMenus() {
+        document.querySelectorAll(".menu-options").forEach((menu) => {
+            menu.style.display = "none";
+        });
+    }
+
+    // Удаление записи
+    document.addEventListener("click", function (e) {
+        if (e.target.classList.contains("delete-btn")) {
+            const id = e.target.getAttribute("data-id");
+            const table = "books";
+
+            if (confirm("Вы уверены, что хотите удалить эту запись?")) {
+                sendRequest("../php/delete_data.php", { table, id })
+                    .then((data) => {
+                        alert(data);
+                        location.reload();
+                    })
+                    .catch((error) => {
+                        console.error("Ошибка:", error);
+                        alert("Произошла ошибка при удалении.");
+                    });
+            }
         }
     });
 
-    // Редактирование записи
-    document.addEventListener('click', function (e) {
-        if (e.target.classList.contains('edit-btn')) {
-            const bookId = e.target.dataset.id;
-            openEditModal(bookId);
+    // Открытие окна для редактирования
+    document.addEventListener("click", function (e) {
+        if (e.target.closest(".edit-btn")) {
+            const bookId = e.target.closest(".edit-btn").getAttribute("data-id");
+            loadAndOpenEditModal(bookId);
         }
     });
 
-    function openEditModal(bookId) {
+    function loadAndOpenEditModal(bookId) {
         const tableName = "books";
-        modal.style.display = 'block';
-        
-        fetch(`get_data.php?id=${bookId}`)
-            .then(response => response.json())
-            .then(data => {
-                Object.keys(data).forEach(key => {
-                    if (document.getElementById(key)) {
-                        document.getElementById(key).value = data[key];
-                    }
-                });
+        editRecordId = bookId; // Сохраняем ID записи
+        openModal(editModal); // Открываем окно редактирования
+
+        fetch(`../php/get_data.php?id=${bookId}&table=${tableName}`)
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.error) {
+                    alert(data.error);
+                    closeModal(editModal);
+                    return;
+                }
+                populateEditForm(data);
             })
-            .catch(error => {
-                console.error('Ошибка:', error);
+            .catch((error) => {
+                console.error("Ошибка загрузки данных:", error);
                 alert("Произошла ошибка при загрузке данных.");
+                closeModal(editModal);
             });
     }
 
-    // Отправка формы
-    addBookForm.addEventListener("submit", function (event) {
-        event.preventDefault();
-        const formData = new FormData(this);
-
-        if (isEditMode) {
-            formData.append("id", editRecordId);
-        }
-
-        const actionUrl = isEditMode ? "../php/update_data.php" : "../php/add_data.php";
-
-        fetch(actionUrl, {
-            method: "POST",
-            body: formData,
-        })
-        .then((response) => response.text())
-        .then((data) => {
-            alert(data);
-            modal.style.display = "none";
-            location.reload();
-        })
-        .catch((error) => {
-            console.error("Ошибка:", error);
-            alert("Произошла ошибка при сохранении данных.");
+    function populateEditForm(data) {
+        Object.keys(data).forEach((key) => {
+            const inputElement = editBookForm.querySelector(`[name="${key}"]`);
+            if (inputElement) {
+                inputElement.value = data[key];
+            }
         });
+    }
+
+    // Отправка формы добавления
+    addBookForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        const formData = new FormData(addBookForm);
+        handleSubmit("../php/add_data.php", formData, addModal);
     });
 
-    // Закрытие модального окна
-    closeBtn.addEventListener('click', function() {
-        modal.style.display = 'none';
+    // Отправка формы редактирования
+    editBookForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        const formData = new FormData(editBookForm);
+        formData.append("id", editRecordId); // Добавляем id записи для редактирования
+        handleSubmit("../php/updata_data.php", formData, editModal);
     });
+
+    // Универсальная функция отправки данных на сервер
+    function handleSubmit(url, formData, modal) {
+        console.log("Данные формы:", Array.from(formData.entries()));
+        fetch(url, { method: "POST", body: formData })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Ошибка сети");
+                }
+                return response.text();
+            })
+            .then((data) => {
+                if (data.startsWith("<")) {
+                    console.error("Получен HTML-код вместо текста:", data);
+                    alert("Произошла ошибка на сервере.");
+                } else {
+                    alert(data); // Показываем текст в alert
+                    closeModal(modal); // Закрываем модальное окно
+                    location.reload(); // Перезагружаем страницу
+                }
+            })
+            .catch((error) => {
+                console.error("Ошибка сохранения:", error);
+            });
+    }
+    
+
+
+
+    // Универсальная функция отправки POST-запросов
+    function sendRequest(url, data) {
+        return fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams(data),
+        }).then((response) => response.text());
+    }
 });
-
-
-
-
 
 

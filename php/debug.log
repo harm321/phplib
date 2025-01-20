@@ -1,0 +1,93 @@
+Array
+(
+    [id] => 3
+    [table] => books
+    [inventory_number] => 123333
+    [inventory_date] => 2025-01-11
+    [publication_type] => 
+    [authors] => 
+    [second_author] => 
+    [third_author] => 
+    [responsibility_info] => 
+    [title] => 
+    [title_related_info] => 
+    [publication_info] => 
+    [series] => 
+    [material_type] => 
+    [publication_place] => 
+    [publisher] => 
+    [year_of_publication] => 0
+    [page_count] => 0
+    [printed_sheets] => 0
+    [mark] => 
+    [isbn] => 
+    [country] => 
+    [copies] => 0
+    [price] => 0.00
+    [edition_copies] => 0
+    [category] => 
+    [keywords] => 
+    [bbk_index] => 
+    [udc_index] => 
+    [grnti_index] => 
+    [author_sign] => 
+    [language] => 
+    [summary] => 
+    [notes] => 
+    [illustrations] => 
+    [binding] => 
+    [verification_mark_1] => 0
+    [verification_mark_2] => 0
+    [verification_mark_3] => 0
+    [sigla] => 
+    [organization_name] => 
+    [physical_characteristics] => 
+)
+Array
+(
+)
+Array
+(
+    [id] => 4
+    [table] => books
+    [inventory_number] => 321
+    [inventory_date] => 2025-01-11
+    [publication_type] => 123
+    [authors] => йцу
+    [second_author] => 
+    [third_author] => 
+    [responsibility_info] => 
+    [title] => 
+    [title_related_info] => 
+    [publication_info] => 
+    [series] => 
+    [material_type] => 
+    [publication_place] => 
+    [publisher] => 
+    [year_of_publication] => 0
+    [page_count] => 0
+    [printed_sheets] => 0
+    [mark] => 
+    [isbn] => 
+    [country] => 
+    [copies] => 0
+    [price] => 0.00
+    [edition_copies] => 0
+    [category] => 
+    [keywords] => 
+    [bbk_index] => 
+    [udc_index] => 
+    [grnti_index] => 
+    [author_sign] => 
+    [language] => 
+    [summary] => 
+    [notes] => 
+    [illustrations] => 
+    [binding] => 
+    [verification_mark_1] => 0
+    [verification_mark_2] => 0
+    [verification_mark_3] => 0
+    [sigla] => 
+    [organization_name] => 
+    [physical_characteristics] => 
+)

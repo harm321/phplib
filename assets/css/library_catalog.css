@@ -9,6 +9,10 @@ body {
     background-color: #f7f7f7;
     display: flex;
     margin: 0;
+    padding: 0;
+}
+body.modal-open {
+    overflow: hidden;
 }
 
 .container {
@@ -70,24 +74,24 @@ body {
 
 main {
     flex-grow: 1;
-    padding: 20px;
+    padding-top: 20px;
+    padding-left: 10px;
     overflow-x: hidden; /* Предотвращаем горизонтальную прокрутку */
     box-sizing: border-box;
 }
 
-.header {
+.header-title {
     margin-bottom: 20px;
+    padding-left: 10px;
 }
 
-.header h1 {
+.header-title {
     font-size: 24px;
 }
 
-.header p {
-    font-size: 16px;
-    color: #555;
+.controls {
+    display: flex;
 }
-
 .button-action {
     display: inline-flex;  /* Добавлено inline-flex */
     align-items: center;   /* Добавлено выравнивание */
@@ -311,27 +315,28 @@ tr {
     }
 }
 
-#modal {
+.modal {
     display: none;
     position: fixed;
-    z-index: 1000;
+    z-index: 3000;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.5);
+    background-color: rgba(0, 0, 0, 0.5);
     overflow-y: auto;
 }
 
+
 .modal-content {
-    background-color: #fefefe;
-    margin: 5% auto;
+    background-color: #fff;
+    margin: 10% auto;
     padding: 20px;
-    border: 1px solid #888;
     width: 80%;
-    max-width: 1200px;
+    max-width: 600px;
     border-radius: 8px;
 }
+
 
 .close {
     color: #aaa;
@@ -390,7 +395,7 @@ textarea {
 
 .table-container {
     position: relative;
-    width: calc(100vw - 290px); /* Ширина таблицы с учетом отступа справа */
+    width: calc(100vw - 250px); /* Ширина таблицы с учетом отступа справа */
     height: calc(100vh - 150px); /* Высота таблицы с учетом отступа снизу */
     overflow: auto;
     border: 1px solid #ddd;
@@ -510,8 +515,15 @@ table tbody tr:hover {
     border: none;
     cursor: pointer;
 }
+.headerSubtitle {
+    margin: auto 10px;
+    font-size: 16px;
+    color: #555;
+    height: auto;
+    text-align: center;
+}
 
-input[placeholder="Поиск"] {
+.searchInput {
     border: 1px solid #ccc;
     border-radius: 10px;
     margin: 0 0 10px 10px;
@@ -522,7 +534,7 @@ input[placeholder="Поиск"] {
     transition: all 0.3s ease;
 }
 
-input[placeholder="Поиск"]:focus {
+.searchInput:focus {
     outline: none;
     border-color: #9dacff;
     box-shadow: 0 0 5px rgba(157, 172, 255, 0.3);
@@ -556,46 +568,10 @@ input[placeholder="Поиск"]:focus {
     font-weight: bold;
 }
 
-.sort-buttons {
-    display: flex;
-    gap: 5px;
-}
-
-.sort-button {
-    padding: 5px 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background: #f5f5f5;
-    cursor: pointer;
-    font-size: 12px;
-}
-
-.sort-button:hover {
-    background: #e0e0e0;
-}
-
-.sort-icon {
-    display: inline-block;
-    margin-left: 5px;
-    cursor: pointer;
-    user-select: none;
-}
-
-.sort-icon.active {
-    color: #4a90e2;
-}
-
 th[data-column] {
     cursor: pointer;
     position: relative;
-    padding-right: 20px; /* Make room for the sort icon */
-}
-
-.sort-icon {
-    display: inline-block;
-    margin-left: 5px;
-    font-size: 12px;
-    color: #999;
+    padding-right: 10px; /* Make room for the sort icon */
 }
 
 .sort-icon.active {
@@ -606,33 +582,20 @@ th[data-column]:hover {
     background-color: #e0e0e0;
 }
 
-.sort-dropdown {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    min-width: 250px;
-    padding: 15px;
+th.sortable:after {
+    content: ' ⇅';
+    font-size: 12px;
+    margin-left: 5px;
 }
 
-.sort-option {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+th.sortable.asc:after {
+    content: ' ↑';
 }
 
-.sort-select {
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 14px;
-    width: 100%;
+th.sortable.desc:after {
+    content: ' ↓';
 }
+
 
 .apply-sort-btn {
     background-color: #9dacff;
@@ -748,3 +711,4 @@ table tbody tr:hover td:first-child,
 table tbody tr:hover td:last-child {
     background-color: #f1f1f1;
 }
+

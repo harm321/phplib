@@ -2,15 +2,18 @@
 <html lang="ru">
 
 <head>
-    <!-- <meta charset="UTF-8"> -->
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Приход книг</title>
     <link rel="stylesheet" href="../assets/css/library_catalog.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+
 </head>
 
 <body>
     <div class="container">
         <aside class="sidebar">
+            <h1 id="header-title" class="header-title">Библиотечный каталог</h1>
             <a href="index.html" class="nav-section">Главная</a>
             <button class="nav-section">Справочник</button>
             <div id="handbook" class="submenu">
@@ -47,63 +50,68 @@
             </div>
         </aside>
         <main>
-            <div class="header">
-                <h1 id="header-title">Библиотечный каталог</h1>
-                <p id="header-subtitle">N книг</p>
-            </div>
             <button class="button-action add-book-btn"><img src="../assets/img/ico-reader.svg"
-                            alt="Иконка добавления читателя" class="button-icon">Добавить новую запись</button>
-            <button class="button-action export-btn"><img src="../assets/img/ico-export.svg" alt="Иконка экспорта"
-                            class="button-icon">Экспортировать</button>
+                alt="Иконка добавления читателя" class="button-icon">Добавить новую запись</button>
+            <button class="button-action export-btn">
+                <img src="../assets/img/ico-export.svg" alt="Иконка экспорта" class="button-icon">
+                Экспортировать
+            </button>
+
+            <div class="controls">
+
+                <input type="text" id="search-input" placeholder="Поиск..." class="searchInput">
+                <p id="header-subtitle" class="headerSubtitle">0 книг выбрано</p>
+            </div>
             <div class="table-container">
+
                 <table>
                     <thead>
                         <tr>
-                            <th class="fixed-checkbox">
+                            <th class="fixed-checkbox sortable"  data-sort="asc">
                                 <input type="checkbox" id="selectAll" class="select-all-checkbox">
                             </th>
-                            <th>Инвентарный номер</th>
-                            <th>Дата зап. в инв.кн.</th>
-                            <th>Вид издания</th>
-                            <th>Автор(ы) издания</th>
-                            <th>Второй автор</th>
-                            <th>Третий автор</th>
-                            <th>Сведения об ответст-ти</th>
-                            <th>Название издания</th>
-                            <th>Свед.относящ.к заглав.</th>
-                            <th>Сведения об издании</th>
-                            <th>Серия</th>
-                            <th>Обозначение материала</th>
-                            <th>Место издания</th>
-                            <th>Издательство</th>
-                            <th>Год издания</th>
-                            <th>Объем страниц</th>
-                            <th>Объем печат.листов</th>
-                            <th>Гриф</th>
-                            <th>ISBN</th>
-                            <th>Страна производителя</th>
-                            <th>Количество экземпляров</th>
-                            <th>Цена (тенге)</th>
-                            <th>Тираж издания</th>
-                            <th>Рубрика</th>
-                            <th>Ключевое слово</th>
-                            <th>Индекс ББК</th>
-                            <th>Индекс УДК</th>
-                            <th>Индекс ГРНТИ</th>
-                            <th>Авторский знак</th>
-                            <th>Язык текста</th>
-                            <th>Краткое содержание</th>
-                            <th>Примечание</th>
-                            <th>Иллюстрация</th>
-                            <th>Переплет</th>
-                            <th>Отметка о проверке №1, год</th>
-                            <th>Отметка о проверке №2, год</th>
-                            <th>Отметка о проверке №3, год</th>
-                            <th>Сигла</th>
-                            <th>Название организации</th>
-                            <th>HTML ссылка</th>
-                            <th>Физические характеристики</th>
-                            <th>Системные требования</th>
+                            <th class="sortable" data-sort="asc">Инвентарный номер</th>
+                            <th class="sortable" data-sort="asc">Дата зап. в инв.кн.</th>
+                            <th class="sortable" data-sort="asc">Вид издания</th>
+                            <th class="sortable" data-sort="asc">Автор(ы) издания</th>
+                            <th class="sortable" data-sort="asc">Второй автор</th>
+                            <th class="sortable" data-sort="asc">Третий автор</th>
+                            <th class="sortable" data-sort="asc">Сведения об ответст-ти</th>
+                            <th class="sortable" data-sort="asc">Название издания</th>
+                            <th class="sortable" data-sort="asc">Свед.относящ.к заглав.</th>
+                            <th class="sortable" data-sort="asc">Сведения об издании</th>
+                            <th class="sortable" data-sort="asc">Серия</th>
+                            <th class="sortable" data-sort="asc">Обозначение материала</th>
+                            <th class="sortable" data-sort="asc">Место издания</th>
+                            <th class="sortable" data-sort="asc">Издательство</th>
+                            <th class="sortable" data-sort="asc">Год издания</th>
+                            <th class="sortable" data-sort="asc">Объем страниц</th>
+                            <th class="sortable" data-sort="asc">Объем печат.листов</th>
+                            <th class="sortable" data-sort="asc">Гриф</th>
+                            <th class="sortable" data-sort="asc">ISBN</th>
+                            <th class="sortable" data-sort="asc">Страна производителя</th>
+                            <th class="sortable" data-sort="asc">Количество экземпляров</th>
+                            <th class="sortable" data-sort="asc">Цена (тенге)</th>
+                            <th class="sortable" data-sort="asc">Тираж издания</th>
+                            <th class="sortable" data-sort="asc">Рубрика</th>
+                            <th class="sortable" data-sort="asc">Ключевое слово</th>
+                            <th class="sortable" data-sort="asc">Индекс ББК</th>
+                            <th class="sortable" data-sort="asc">Индекс УДК</th>
+                            <th class="sortable" data-sort="asc">Индекс ГРНТИ</th>
+                            <th class="sortable" data-sort="asc">Авторский знак</th>
+                            <th class="sortable" data-sort="asc">Язык текста</th>
+                            <th class="sortable" data-sort="asc">Краткое содержание</th>
+                            <th class="sortable" data-sort="asc">Примечание</th>
+                            <th class="sortable" data-sort="asc">Иллюстрация</th>
+                            <th class="sortable" data-sort="asc">Переплет</th>
+                            <th class="sortable" data-sort="asc">Отметка о проверке №1, год</th>
+                            <th class="sortable" data-sort="asc">Отметка о проверке №2, год</th>
+                            <th class="sortable" data-sort="asc">Отметка о проверке №3, год</th>
+                            <th class="sortable" data-sort="asc">Сигла</th>
+                            <th class="sortable" data-sort="asc">Название организации</th>
+                            <th class="sortable" data-sort="asc">HTML ссылка</th>
+                            <th class="sortable" data-sort="asc">Физические характеристики</th>
+                            <th class="sortable" data-sort="asc">Системные требования</th>
                             <th class="fixed-menu">Действия</th>
                         </tr>
                     </thead>
@@ -190,7 +198,7 @@
         </main>
     </div>
     <!-- Модальное окно -->
-    <div id="modal">
+    <div id="addModal" class="modal" >
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>Добавить новую запись</h2>
@@ -198,108 +206,111 @@
             <form id="addBookForm" class="form-grid">
                 <input type="hidden" name="table" value="books">
 
-                <div><label for="inventoryNumber">Инвентарный номер</label><input type="text" id="inventoryNumber" name="inventory_number" required></div>
-                <div><label for="inventoryDate">Дата зап. в инв.кн.</label><input type="date" id="inventoryDate" name="inventory_date" required></div>
-                <div><label for="publicationType">Вид издания</label><input type="text" id="publicationType" name="publication_type"></div>
+                <div><label for="inventory_number">Инвентарный номер</label><input type="text" id="inventory_number" name="inventory_number" required></div>
+                <div><label for="inventory_date">Дата зап. в инв.кн.</label><input type="date" id="inventory_date" name="inventory_date" required></div>
+                <div><label for="publication_type">Вид издания</label><input type="text" id="publication_type" name="publication_type"></div>
                 <div><label for="authors">Автор(ы)</label><input type="text" id="authors" name="authors"></div>
-                <div><label for="secondAuthor">Второй автор</label><input type="text" id="secondAuthor" name="second_author"></div>
-                <div><label for="thirdAuthor">Третий автор</label><input type="text" id="thirdAuthor" name="third_author"></div>
-                <div><label for="responsibilityInfo">Ответственность</label><input type="text" id="responsibilityInfo" name="responsibility_info"></div>
+                <div><label for="second_author">Второй автор</label><input type="text" id="second_author" name="second_author"></div>
+                <div><label for="third_author">Третий автор</label><input type="text" id="third_author" name="third_author"></div>
+                <div><label for="responsibility_info">Ответственность</label><input type="text" id="responsibility_info" name="responsibility_info"></div>
                 <div><label for="title">Название</label><input type="text" id="title" name="title"></div>
-                <div><label for="titleRelatedInfo">Связанная информация</label><input type="text" id="titleRelatedInfo" name="title_related_info"></div>
-                <div><label for="publicationInfo">Информация об издании</label><input type="text" id="publicationInfo" name="publication_info"></div>
+                <div><label for="title_related_info">Связанная информация</label><input type="text" id="title_related_info" name="title_related_info"></div>
+                <div><label for="publication_info">Информация об издании</label><input type="text" id="publication_info" name="publication_info"></div>
                 <div><label for="series">Серия</label><input type="text" id="series" name="series"></div>
-                <div><label for="materialType">Тип материала</label><input type="text" id="materialType" name="material_type"></div>
-                <div><label for="publicationPlace">Место издания</label><input type="text" id="publicationPlace" name="publication_place"></div>
+                <div><label for="material_type">Тип материала</label><input type="text" id="material_type" name="material_type"></div>
+                <div><label for="publication_place">Место издания</label><input type="text" id="publication_place" name="publication_place"></div>
                 <div><label for="publisher">Издатель</label><input type="text" id="publisher" name="publisher"></div>
-                <div><label for="yearOfPublication">Год издания</label><input type="number" id="yearOfPublication" name="year_of_publication"></div>
-                <div><label for="pageCount">Страниц</label><input type="number" id="pageCount" name="page_count"></div>
-                <div><label for="printedSheets">Печатные листы</label><input type="number" step="0.1" id="printedSheets" name="printed_sheets"></div>
+                <div><label for="year_of_publication">Год издания</label><input type="number" id="year_of_publication" name="year_of_publication"></div>
+                <div><label for="page_count">Страниц</label><input type="number" id="page_count" name="page_count"></div>
+                <div><label for="printed_sheets">Печатные листы</label><input type="number" step="0.1" id="printed_sheets" name="printed_sheets"></div>
                 <div><label for="mark">Марка</label><input type="text" id="mark" name="mark"></div>
                 <div><label for="isbn">ISBN</label><input type="text" id="isbn" name="isbn"></div>
                 <div><label for="country">Страна</label><input type="text" id="country" name="country"></div>
                 <div><label for="copies">Экземпляры</label><input type="number" id="copies" name="copies"></div>
                 <div><label for="price">Цена (тенге)</label><input type="number" step="0.01" id="price" name="price"></div>
-                <div><label for="editionCopies">Тираж</label><input type="number" id="editionCopies" name="edition_copies"></div>
+                <div><label for="edition_copies">Тираж</label><input type="number" id="edition_copies" name="edition_copies"></div>
                 <div><label for="category">Категория</label><input type="text" id="category" name="category"></div>
                 <div><label for="keywords">Ключевые слова</label><input type="text" id="keywords" name="keywords"></div>
-                <div><label for="bbkIndex">ББК</label><input type="text" id="bbkIndex" name="bbk_index"></div>
-                <div><label for="udcIndex">УДК</label><input type="text" id="udcIndex" name="udc_index"></div>
-                <div><label for="grntiIndex">ГРНТИ</label><input type="text" id="grntiIndex" name="grnti_index"></div>
-                <div><label for="authorSign">Авторский знак</label><input type="text" id="authorSign" name="author_sign"></div>
+                <div><label for="bbk_index">ББК</label><input type="text" id="bbk_index" name="bbk_index"></div>
+                <div><label for="udc_index">УДК</label><input type="text" id="udc_index" name="udc_index"></div>
+                <div><label for="grnti_index">ГРНТИ</label><input type="text" id="grnti_index" name="grnti_index"></div>
+                <div><label for="author_sign">Авторский знак</label><input type="text" id="author_sign" name="author_sign"></div>
                 <div><label for="language">Язык</label><input type="text" id="language" name="language"></div>
                 <div><label for="summary">Краткое содержание</label><textarea id="summary" name="summary"></textarea></div>
                 <div><label for="notes">Примечания</label><textarea id="notes" name="notes"></textarea></div>
                 <div><label for="illustrations">Иллюстрации</label><input type="text" id="illustrations" name="illustrations"></div>
                 <div><label for="binding">Переплёт</label><input type="text" id="binding" name="binding"></div>
-                <div><label for="verificationMark1">Проверка 1</label><input type="number" id="verificationMark1" name="verification_mark_1"></div>
-                <div><label for="verificationMark2">Проверка 2</label><input type="number" id="verificationMark2" name="verification_mark_2"></div>
-                <div><label for="verificationMark3">Проверка 3</label><input type="number" id="verificationMark3" name="verification_mark_3"></div>
+                <div><label for="verification_mark_1">Проверка 1</label><input type="number" id="verification_mark_1" name="verification_mark_1"></div>
+                <div><label for="verification_mark_2">Проверка 2</label><input type="number" id="verification_mark_2" name="verification_mark_2"></div>
+                <div><label for="verification_mark_3">Проверка 3</label><input type="number" id="verification_mark_3" name="verification_mark_3"></div>
                 <div><label for="sigla">Сигла</label><input type="text" id="sigla" name="sigla"></div>
-                <div><label for="organizationName">Организация</label><input type="text" id="organizationName" name="organization_name"></div>
-                <div><label for="physicalCharacteristics">Физ. характеристики</label><input type="text" id="physicalCharacteristics" name="physical_characteristics"></div>
+                <div><label for="organization_name">Организация</label><input type="text" id="organization_name" name="organization_name"></div>
+                <div><label for="physical_characteristics">Физ. характеристики</label><input type="text" id="physical_characteristics" name="physical_characteristics"></div>
+
 
                 <button type="submit" class="submit">Добавить запись</button>
             </form>
         </div>
     </div>
-    <!-- Модальное окно для редактирования -->
-<div id="editModal">
+<!-- Модальное окно для редактирования -->
+<div id="editModal" class="modal" >
     <div class="modal-content">
         <span class="close">&times;</span>
         <h2>Редактировать запись</h2>
 
         <form id="editBookForm" class="form-grid">
             <input type="hidden" id="editId" name="id"> <!-- ID записи для редактирования -->
+            <input type="hidden" name="table" value="books">
+            <div><label for="inventory_number">Инвентарный номер</label><input type="text" id="inventory_number" name="inventory_number" required></div>
+            <div><label for="inventory_date">Дата зап. в инв.кн.</label><input type="date" id="inventory_date" name="inventory_date" required></div>
+            <div><label for="publication_type">Вид издания</label><input type="text" id="publication_type" name="publication_type"></div>
+            <div><label for="authors">Автор(ы)</label><input type="text" id="authors" name="authors"></div>
+            <div><label for="second_author">Второй автор</label><input type="text" id="second_author" name="second_author"></div>
+            <div><label for="third_author">Третий автор</label><input type="text" id="third_author" name="third_author"></div>
+            <div><label for="responsibility_info">Ответственность</label><input type="text" id="responsibility_info" name="responsibility_info"></div>
+            <div><label for="title">Название</label><input type="text" id="title" name="title"></div>
+            <div><label for="title_related_info">Связанная информация</label><input type="text" id="title_related_info" name="title_related_info"></div>
+            <div><label for="publication_info">Информация об издании</label><input type="text" id="publication_info" name="publication_info"></div>
+            <div><label for="series">Серия</label><input type="text" id="series" name="series"></div>
+            <div><label for="material_type">Тип материала</label><input type="text" id="material_type" name="material_type"></div>
+            <div><label for="publication_place">Место издания</label><input type="text" id="publication_place" name="publication_place"></div>
+            <div><label for="publisher">Издатель</label><input type="text" id="publisher" name="publisher"></div>
+            <div><label for="year_of_publication">Год издания</label><input type="number" id="year_of_publication" name="year_of_publication"></div>
+            <div><label for="page_count">Страниц</label><input type="number" id="page_count" name="page_count"></div>
+            <div><label for="printed_sheets">Печатные листы</label><input type="number" step="0.1" id="printed_sheets" name="printed_sheets"></div>
+            <div><label for="mark">Марка</label><input type="text" id="mark" name="mark"></div>
+            <div><label for="isbn">ISBN</label><input type="text" id="isbn" name="isbn"></div>
+            <div><label for="country">Страна</label><input type="text" id="country" name="country"></div>
+            <div><label for="copies">Экземпляры</label><input type="number" id="copies" name="copies"></div>
+            <div><label for="price">Цена (тенге)</label><input type="number" step="0.01" id="price" name="price"></div>
+            <div><label for="edition_copies">Тираж</label><input type="number" id="edition_copies" name="edition_copies"></div>
+            <div><label for="category">Категория</label><input type="text" id="category" name="category"></div>
+            <div><label for="keywords">Ключевые слова</label><input type="text" id="keywords" name="keywords"></div>
+            <div><label for="bbk_index">ББК</label><input type="text" id="bbk_index" name="bbk_index"></div>
+            <div><label for="udc_index">УДК</label><input type="text" id="udc_index" name="udc_index"></div>
+            <div><label for="grnti_index">ГРНТИ</label><input type="text" id="grnti_index" name="grnti_index"></div>
+            <div><label for="author_sign">Авторский знак</label><input type="text" id="author_sign" name="author_sign"></div>
+            <div><label for="language">Язык</label><input type="text" id="language" name="language"></div>
+            <div><label for="summary">Краткое содержание</label><textarea id="summary" name="summary"></textarea></div>
+            <div><label for="notes">Примечания</label><textarea id="notes" name="notes"></textarea></div>
+            <div><label for="illustrations">Иллюстрации</label><input type="text" id="illustrations" name="illustrations"></div>
+            <div><label for="binding">Переплёт</label><input type="text" id="binding" name="binding"></div>
+            <div><label for="verification_mark_1">Проверка 1</label><input type="number" id="verification_mark_1" name="verification_mark_1"></div>
+            <div><label for="verification_mark_2">Проверка 2</label><input type="number" id="verification_mark_2" name="verification_mark_2"></div>
+            <div><label for="verification_mark_3">Проверка 3</label><input type="number" id="verification_mark_3" name="verification_mark_3"></div>
+            <div><label for="sigla">Сигла</label><input type="text" id="sigla" name="sigla"></div>
+            <div><label for="organization_name">Организация</label><input type="text" id="organization_name" name="organization_name"></div>
+            <div><label for="physical_characteristics">Физ. характеристики</label><input type="text" id="physical_characteristics" name="physical_characteristics"></div>
 
-            <div><label for="editInventoryNumber">Инвентарный номер</label><input type="text" id="editInventoryNumber" name="inventory_number" required></div>
-            <div><label for="editInventoryDate">Дата зап. в инв.кн.</label><input type="date" id="editInventoryDate" name="inventory_date" required></div>
-            <div><label for="editPublicationType">Вид издания</label><input type="text" id="editPublicationType" name="publication_type"></div>
-            <div><label for="editAuthors">Автор(ы)</label><input type="text" id="editAuthors" name="authors"></div>
-            <div><label for="editSecondAuthor">Второй автор</label><input type="text" id="editSecondAuthor" name="second_author"></div>
-            <div><label for="editThirdAuthor">Третий автор</label><input type="text" id="editThirdAuthor" name="third_author"></div>
-            <div><label for="editResponsibilityInfo">Ответственность</label><input type="text" id="editResponsibilityInfo" name="responsibility_info"></div>
-            <div><label for="editTitle">Название</label><input type="text" id="editTitle" name="title"></div>
-            <div><label for="editTitleRelatedInfo">Связанная информация</label><input type="text" id="editTitleRelatedInfo" name="title_related_info"></div>
-            <div><label for="editPublicationInfo">Информация об издании</label><input type="text" id="editPublicationInfo" name="publication_info"></div>
-            <div><label for="editSeries">Серия</label><input type="text" id="editSeries" name="series"></div>
-            <div><label for="editMaterialType">Тип материала</label><input type="text" id="editMaterialType" name="material_type"></div>
-            <div><label for="editPublicationPlace">Место издания</label><input type="text" id="editPublicationPlace" name="publication_place"></div>
-            <div><label for="editPublisher">Издатель</label><input type="text" id="editPublisher" name="publisher"></div>
-            <div><label for="editYearOfPublication">Год издания</label><input type="number" id="editYearOfPublication" name="year_of_publication"></div>
-            <div><label for="editPageCount">Страниц</label><input type="number" id="editPageCount" name="page_count"></div>
-            <div><label for="editPrintedSheets">Печатные листы</label><input type="number" step="0.1" id="editPrintedSheets" name="printed_sheets"></div>
-            <div><label for="editMark">Марка</label><input type="text" id="editMark" name="mark"></div>
-            <div><label for="editIsbn">ISBN</label><input type="text" id="editIsbn" name="isbn"></div>
-            <div><label for="editCountry">Страна</label><input type="text" id="editCountry" name="country"></div>
-            <div><label for="editCopies">Экземпляры</label><input type="number" id="editCopies" name="copies"></div>
-            <div><label for="editPrice">Цена (тенге)</label><input type="number" step="0.01" id="editPrice" name="price"></div>
-            <div><label for="editEditionCopies">Тираж</label><input type="number" id="editEditionCopies" name="edition_copies"></div>
-            <div><label for="editCategory">Категория</label><input type="text" id="editCategory" name="category"></div>
-            <div><label for="editKeywords">Ключевые слова</label><input type="text" id="editKeywords" name="keywords"></div>
-            <div><label for="editBbkIndex">ББК</label><input type="text" id="editBbkIndex" name="bbk_index"></div>
-            <div><label for="editUdcIndex">УДК</label><input type="text" id="editUdcIndex" name="udc_index"></div>
-            <div><label for="editGrntiIndex">ГРНТИ</label><input type="text" id="editGrntiIndex" name="grnti_index"></div>
-            <div><label for="editAuthorSign">Авторский знак</label><input type="text" id="editAuthorSign" name="author_sign"></div>
-            <div><label for="editLanguage">Язык</label><input type="text" id="editLanguage" name="language"></div>
-            <div><label for="editSummary">Краткое содержание</label><textarea id="editSummary" name="summary"></textarea></div>
-            <div><label for="editNotes">Примечания</label><textarea id="editNotes" name="notes"></textarea></div>
-            <div><label for="editIllustrations">Иллюстрации</label><input type="text" id="editIllustrations" name="illustrations"></div>
-            <div><label for="editBinding">Переплёт</label><input type="text" id="editBinding" name="binding"></div>
-            <div><label for="editVerificationMark1">Проверка 1</label><input type="number" id="editVerificationMark1" name="verification_mark_1"></div>
-            <div><label for="editVerificationMark2">Проверка 2</label><input type="number" id="editVerificationMark2" name="verification_mark_2"></div>
-            <div><label for="editVerificationMark3">Проверка 3</label><input type="number" id="editVerificationMark3" name="verification_mark_3"></div>
-            <div><label for="editSigla">Сигла</label><input type="text" id="editSigla" name="sigla"></div>
-            <div><label for="editOrganizationName">Организация</label><input type="text" id="editOrganizationName" name="organization_name"></div>
-            <div><label for="editPhysicalCharacteristics">Физ. характеристики</label><input type="text" id="editPhysicalCharacteristics" name="physical_characteristics"></div>
 
             <button type="submit" class="submit">Сохранить изменения</button>
         </form>
     </div>
 </div>
 
-</body>
 <script src="../assets/js/library_catalog.js"></script>
+<script src="../assets/js/sort.js"></script>
+</body>
 
 
 </html>
