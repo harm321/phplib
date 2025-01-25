@@ -333,7 +333,7 @@ tr {
     margin: 10% auto;
     padding: 20px;
     width: 80%;
-    max-width: 600px;
+    max-width: 1000px;
     border-radius: 8px;
 }
 
@@ -486,6 +486,7 @@ table thead th {
 
 /* Фиксированная высота для строк таблицы */
 table tbody td {
+    width: 100%;
     height: 90px; /* Высота ячеек в строках */
     overflow: hidden;
     vertical-align: middle;
@@ -711,4 +712,3 @@ table tbody tr:hover td:first-child,
 table tbody tr:hover td:last-child {
     background-color: #f1f1f1;
 }
-

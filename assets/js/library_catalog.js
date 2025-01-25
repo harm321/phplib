@@ -7,12 +7,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const closeBtns = document.querySelectorAll(".close"); // Кнопки закрытия окон
     let editRecordId = null; // Переменная для хранения ID редактируемой записи
 
-    // Универсальная функция для открытия окна
+    // функция для открытия окна
     function openModal(modal) {
         modal.style.display = "block";
     }
 
-    // Универсальная функция для закрытия окна
+    // функция для закрытия окна
     function closeModal(modal) {
         modal.style.display = "none";
         editRecordId = null; // Сброс ID записи
@@ -134,11 +134,11 @@ document.addEventListener("DOMContentLoaded", function () {
     editBookForm.addEventListener("submit", function (e) {
         e.preventDefault();
         const formData = new FormData(editBookForm);
-        formData.append("id", editRecordId); // Добавляем id записи для редактирования
+        formData.append("id", editRecordId); //  id записи для редактирования
         handleSubmit("../php/updata_data.php", formData, editModal);
     });
 
-    // Универсальная функция отправки данных на сервер
+    // функция отправки данных на сервер
     function handleSubmit(url, formData, modal) {
         console.log("Данные формы:", Array.from(formData.entries()));
         fetch(url, { method: "POST", body: formData })
@@ -153,9 +153,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     console.error("Получен HTML-код вместо текста:", data);
                     alert("Произошла ошибка на сервере.");
                 } else {
-                    alert(data); // Показываем текст в alert
-                    closeModal(modal); // Закрываем модальное окно
-                    location.reload(); // Перезагружаем страницу
+                    alert(data); 
+                    closeModal(modal); 
+                    location.reload(); 
                 }
             })
             .catch((error) => {
@@ -166,7 +166,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-    // Универсальная функция отправки POST-запросов
+    //  функция отправки POST-запросов
     function sendRequest(url, data) {
         return fetch(url, {
             method: "POST",

@@ -1,132 +1,230 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const table = document.querySelector('table');
-    const headers = table.querySelectorAll('th.sortable');
-    const searchInput = document.getElementById('search-input');
-    
-    // Процесс сортировки
-    headers.forEach(header => {
-        header.addEventListener('click', function() {
-            const index = Array.from(headers).indexOf(header); // Получаем индекс нажатого столбца
-            const rows = Array.from(table.querySelectorAll('tbody tr')); // Получаем все строки таблицы
-            const currentDirection = header.getAttribute('data-sort') || 'asc'; // Получаем текущее направление сортировки
-            const newDirection = currentDirection === 'asc' ? 'desc' : 'asc'; // Переключаем направление
+let offset = 0;
+const limit = 50;
+let isLoading = false;
+let currentSearch = ''; // Текущий поисковый запрос
+let currentSortBy = 'Title'; // Поле для сортировки (по умолчанию)
+let currentSortOrder = 'ASC'; // Порядок сортировки (по умолчанию)
 
-            // Сортируем строки на основе выбранного столбца
-            rows.sort((a, b) => {
-                const aText = a.cells[index].textContent.trim();
-                const bText = b.cells[index].textContent.trim();
+let selectedBooks = []; // Массив для хранения инвентарных номеров выбранных книг
+let totalBooksCount = 0; // Общее количество книг
 
-                const comparison = aText.localeCompare(bText, 'ru', { numeric: true });
-                
-                return newDirection === 'asc' ? comparison : -comparison;
-            });
+// Функция загрузки данных
+async function loadBooks(reset = false) {
+    if (isLoading) return;
+    isLoading = true;
 
-            // Перемещаем строки в правильном порядке
-            rows.forEach(row => table.querySelector('tbody').appendChild(row));
-
-            // Обновляем атрибуты сортировки
-            headers.forEach(header => header.setAttribute('data-sort', 'asc')); // Сбрасываем направление сортировки для всех
-            header.setAttribute('data-sort', newDirection); // Устанавливаем новое направление для текущего столбца
-
-            // Обновляем визуальные индикаторы сортировки
-            headers.forEach(header => header.classList.remove('asc', 'desc')); // Убираем старые классы
-            header.classList.add(newDirection); // Добавляем новый класс для текущего столбца
-        });
-    });
-
-    // Обработчик для поиска
-    searchInput.addEventListener('input', function() {
-        const query = searchInput.value.toLowerCase(); // Получаем текст поиска и приводим его к нижнему регистру
-        const rows = table.querySelectorAll('tbody tr'); // Получаем все строки таблицы
-
-        rows.forEach(row => {
-            let found = false;
-
-            // Проверяем все ячейки строки
-            row.querySelectorAll('td').forEach(cell => {
-                if (cell.textContent.toLowerCase().includes(query)) {
-                    found = true;
-                }
-            });
-
-            // Если в строке найдено совпадение, показываем строку, иначе скрываем
-            row.style.display = found ? '' : 'none';
-        });
-    });
-    // Обработчик для "Выбрать все" чекбокс
-    const selectAllCheckbox = document.getElementById('selectAll');
-    const rowCheckboxes = document.querySelectorAll('.row-checkbox');
-    const headerSubtitle = document.getElementById('header-subtitle');
-
-    // Функция для обновления текста в заголовке
-    function updateSelectedCount() {
-        const selectedCount = [...rowCheckboxes].filter(checkbox => checkbox.checked).length;
-        headerSubtitle.textContent = `${selectedCount} книг выбрано`;
-    }
-
-    // Устанавливаем обработчик для "Выбрать все"
-    selectAllCheckbox.addEventListener('change', function() {
-        const isChecked = selectAllCheckbox.checked;
-        rowCheckboxes.forEach(checkbox => {
-            checkbox.checked = isChecked;
-        });
-        updateSelectedCount(); // Обновляем количество после изменения состояния
-    });
-
-    // Обработчик для чекбоксов в строках
-    rowCheckboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-            const allChecked = [...rowCheckboxes].every(checkbox => checkbox.checked);
-            selectAllCheckbox.checked = allChecked; // Если все чекбоксы в строках выбраны, устанавливаем "Выбрать все" в состояние checked
-            selectAllCheckbox.indeterminate = !allChecked && [...rowCheckboxes].some(checkbox => checkbox.checked); // Если некоторые чекбоксы выбраны, устанавливаем indeterminate
-            updateSelectedCount(); // Обновляем количество после изменения состояния
-        });
-    });
-
-    // Инициализируем начальное количество выбранных чекбоксов
-    updateSelectedCount();
-    // Обработчик для кнопки "Экспортировать"
-    const exportButton = document.querySelector('.export-btn');
-
-    exportButton.addEventListener('click', function() {
-        const selectedRows = [...rowCheckboxes].filter(checkbox => checkbox.checked).map(checkbox => {
-            const row = checkbox.closest('tr'); // Находим родительскую строку для выбранного чекбокса
-            const rowData = [];
-            row.querySelectorAll('td').forEach((cell, index) => {
-                if (index !== 0) { // Пропускаем первый столбец
-                    rowData.push(cell.textContent.trim()); // Собираем текст из каждой ячейки строки
-                }
-            });
-            return rowData;
-        });
-
-        // Заголовки столбцов для экспорта
-        const headers = [
-            "Инвентарный номер", "Дата зап. в инв.кн.", "Вид издания", "Автор(ы) издания", "Второй автор", "Третий автор", "Сведения об ответст-ти",
-            "Название издания", "Свед.относящ.к заглав.", "Сведения об издании", "Серия", "Обозначение материала", "Место издания",
-            "Издательство", "Год издания", "Объем страниц", "Объем печат.листов", "Гриф", "ISBN", "Страна производителя",
-            "Количество экземпляров", "Цена (тенге)", "Тираж издания", "Рубрика", "Ключевое слово", "Индекс ББК", "Индекс УДК",
-            "Индекс ГРНТИ", "Авторский знак", "Язык текста", "Краткое содержание", "Примечание", "Иллюстрация", "Переплет",
-            "Отметка о проверке №1, год", "Отметка о проверке №2, год", "Отметка о проверке №3, год", "Сигла", "Название организации",
-            "HTML ссылка", "Физические характеристики", "Системные требования"
-        ];
-
-        if (selectedRows.length > 0) {
-            // Добавляем заголовки в начало данных
-            selectedRows.unshift(headers);
-
-            // Создаем объект для записи в Excel
-            const wb = XLSX.utils.book_new(); // Новый Excel файл
-            const ws = XLSX.utils.aoa_to_sheet(selectedRows); // Преобразуем строки в формат листа Excel
-            XLSX.utils.book_append_sheet(wb, ws, "Selected Books"); // Добавляем лист в файл
-            XLSX.writeFile(wb, 'selected_books.xlsx'); // Загружаем файл
-        } else {
-            alert('Пожалуйста, выберите хотя бы один элемент для экспорта.');
+    try {
+        if (reset) {
+            offset = 0;
+            document.getElementById('book-table-body').innerHTML = '';
         }
+
+        const response = await fetch(
+            `../php/db.php?offset=${offset}&limit=${limit}&search=${encodeURIComponent(currentSearch)}&sort_by=${currentSortBy}&sort_order=${currentSortOrder}`
+        );
+        const data = await response.json();
+
+        const books = data.books;
+        totalBooksCount = data.totalBooks; // Получаем общее количество книг
+
+        if (books.length === 0) {
+            window.removeEventListener('scroll', handleScroll);
+            return;
+        }
+
+        // Обновляем отображение общего количества книг
+        const totalCountElement = document.getElementById('header-subtitle2');
+        if (totalCountElement) {
+            totalCountElement.textContent = `Всего книг: ${totalBooksCount}`;
+        }
+
+        const tbody = document.getElementById('book-table-body');
+
+        // Генерация строк
+        books.forEach(book => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td class='fixed-checkbox'><input type='checkbox' class='row-checkbox' data-inventory='${book.InventoryNumber}'></td>
+                <td>${book.InventoryNumber}</td>
+                <td>${book.Authors}</td>
+                <td>${book.Title}</td>
+                <td>${book.PublicationType}</td>
+                <td>${book.PlaceOfPublication}</td>
+                <td>${book.Publisher}</td>
+                <td>${book.Year}</td>
+                <td>${book.Volume}</td>
+                <td>${book.Language}</td>
+                <td>${book.ISBN}</td>
+                <td>${book.Category}</td>
+                <td>${book.Keyword}</td>
+                <td>${book.UDC}</td>
+                <td>${book.BBK}</td>
+                <td>${book.Series}</td>
+                <td>${book.Content}</td>
+                <td>${book.Label}</td>
+                <td>${book.SecondAuthor}</td>
+                <td>${book.TitleRelatedInfo}</td>
+                <td>${book.RecordDate}</td>
+                <td>${book.RecordTime}</td>
+                <td>${book.Price}</td>
+                <td>${book.Notes}</td>
+                <td>${book.DecommissionActNumber}</td>
+                <td>${book.Copies}</td>
+                <td>${book.AuthorSign}</td>
+                <td>${book.ResponsibilityInfo}</td>
+                <td>${book.Sigla}</td>
+                <td>${book.OrganizationName}</td>
+                <td>${book.ThirdAuthor}</td>
+                <td>${book.MaterialDesignation}</td>
+                <td>${book.PrintRun}</td>
+                <td>${book.Binding}</td>
+                <td>${book.PrintedSheets}</td>
+                <td>${book.SystemRequirements}</td>
+                <td>${book.ResponsibilityArea}</td>
+                <td>${book.DocumentEmail}</td>
+                <td>${book.TimeInterval}</td>
+                <td class='fixed-menu'>
+                    <button class='menu-btn'>
+                        <img src='../assets/img/library-dashboard/menu-ico.svg' alt='Меню' class='menu-icon' title='Меню'>
+                    </button>
+                    <div class='menu-options'>
+                        <button class='menu-icon-btn edit-btn' data-id='${book.InventoryNumber}'>
+                            <img src='../assets/img/library-dashboard/edit-ico.svg' alt='Редактировать' class='menu-icon' title='Редактировать'>
+                        </button>
+                        <button class='menu-icon-btn delete-btn' data-id='${book.InventoryNumber}'>
+                            <img src='../assets/img/library-dashboard/delete-ico.svg' alt='Удалить' class='menu-icon' title='Удалить'>
+                        </button>
+                    </div>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+
+        offset += limit;
+    } catch (error) {
+        console.error('Ошибка загрузки данных:', error);
+    } finally {
+        isLoading = false;
+    }
+}
+
+// Обработчик сортировки
+document.querySelectorAll('th[data-sort]').forEach(header => {
+    header.addEventListener('click', () => {
+        const sortBy = header.getAttribute('data-sort');
+
+        // Если нажали на тот же столбец, меняем порядок сортировки
+        if (currentSortBy === sortBy) {
+            currentSortOrder = currentSortOrder === 'ASC' ? 'DESC' : 'ASC';
+        } else {
+            currentSortBy = sortBy;
+            currentSortOrder = 'ASC'; // По умолчанию при смене столбца
+        }
+
+        loadBooks(true); // Перезагружаем данные с новой сортировкой
+    });
+});
+
+// Обработчик поиска
+document.getElementById('search-input').addEventListener('input', (e) => {
+    currentSearch = e.target.value.trim();
+    loadBooks(true);
+});
+
+// Обработчик прокрутки
+function handleScroll() {
+    const scrollPosition = window.innerHeight + window.scrollY;
+    const threshold = document.body.offsetHeight - 200;
+
+    if (scrollPosition >= threshold) {
+        loadBooks();
+    }
+}
+
+// Инициализация
+document.addEventListener('DOMContentLoaded', () => {
+    loadBooks();
+    window.addEventListener('scroll', handleScroll);
+});
+
+// Обработчик для "Выбрать все" чекбоксы
+const selectAllCheckbox = document.getElementById('selectAll');
+const headerSubtitle = document.getElementById('header-subtitle');
+
+// Функция для обновления текста в заголовке
+function updateSelectedCount() {
+    const selectedCount = selectedBooks.length;
+    headerSubtitle.textContent = `${selectedCount} книг выбрано`;
+}
+
+// Устанавливаем обработчик для "Выбрать все"
+selectAllCheckbox.addEventListener('change', function() {
+    const isChecked = selectAllCheckbox.checked;
+
+    // Обновляем массив выбранных книг
+    selectedBooks = isChecked ? [...document.querySelectorAll('.row-checkbox')].map(checkbox => checkbox.getAttribute('data-inventory')) : [];
+
+    // Обновляем состояние чекбоксов
+    document.querySelectorAll('.row-checkbox').forEach(checkbox => {
+        checkbox.checked = isChecked;
     });
 
+    updateSelectedCount(); // Обновляем количество после изменения состояния
+});
+
+// Добавляем обработчик для новых чекбоксов
+document.getElementById('book-table-body').addEventListener('change', function(e) {
+    if (e.target.classList.contains('row-checkbox')) {
+        const inventoryNumber = e.target.getAttribute('data-inventory');
+        if (e.target.checked) {
+            selectedBooks.push(inventoryNumber);
+        } else {
+            selectedBooks = selectedBooks.filter(item => item !== inventoryNumber);
+        }
+        updateSelectedCount();
+
+        // Обновляем состояние "Выбрать все"
+        const allChecked = [...document.querySelectorAll('.row-checkbox')].every(checkbox => checkbox.checked);
+        selectAllCheckbox.checked = allChecked;
+        selectAllCheckbox.indeterminate = !allChecked && [...document.querySelectorAll('.row-checkbox')].some(checkbox => checkbox.checked);
+    }
+});
 
 
 
+// начальное количество выбранных чекбоксов
+updateSelectedCount();
 
+// Обработчик для кнопки "Экспортировать"
+const exportButton = document.querySelector('.export-btn');
+
+exportButton.addEventListener('click', function() {
+    const selectedRows = selectedBooks.map(inventoryNumber => {
+        const row = [...document.querySelectorAll('.row-checkbox')].find(checkbox => checkbox.getAttribute('data-inventory') === inventoryNumber).closest('tr');
+        const rowData = [];
+        row.querySelectorAll('td').forEach((cell, index) => {
+            if (index !== 0) { // Пропускаем первый столбец
+                rowData.push(cell.textContent.trim()); // Собираем текст из каждой ячейки строки
+            }
+        });
+        return rowData;
+    });
+
+    const headers = [
+        "Инвентарный номер", "Автор(ы)", "Название издания", "Вид издания", "Место издания", "Издательство", "Год",
+        "Объем издания", "Язык", "ISBN", "Рубрика", "Ключевое слово", "УДК", "ББК", "Серия", "Содержание", "Гриф",
+        "Второй автор", "Свед.относящ.к заглав.", "Дата", "время записи", "Цена", "Примечание", "№ акта выбытия",
+        "Количество экземпляров", "Авторский знак", "Сведения об ответст-ти",
+        "Сигла", "Название организации", "Третий автор", "Обозначение материала", "Тираж издания", "Переплет",
+        "Объем печат.листов", "Системные требования", "Область ответственности", "Электронный адрес документа", "Интервал"
+    ];
+
+    if (selectedRows.length > 0) {
+        const workbook = XLSX.utils.book_new();
+        const worksheet = XLSX.utils.aoa_to_sheet([headers, ...selectedRows]);
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Книги');
+        XLSX.writeFile(workbook, 'selected_books.xlsx');
+    } else {
+        alert('Выберите хотя бы одну книгу для экспорта.');
+    }
 });

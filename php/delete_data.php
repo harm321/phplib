@@ -2,7 +2,7 @@
 require 'db.php'; // Подключение к БД
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    // Получаем название таблицы и ID записи для удаления
+    //  название таблицы и ID записи для удаления
     $table = isset($_POST['table']) ? $_POST['table'] : '';
     $id = isset($_POST['id']) ? $_POST['id'] : '';
 
@@ -20,11 +20,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         die("Ошибка: запись с ID '$id' не найдена в таблице '$table'.");
     }
 
-    // Формируем SQL-запрос для удаления записи
+    //  SQL-запрос для удаления записи
     $sql = "DELETE FROM `$table` WHERE id = :id";
     $stmt = $conn->prepare($sql);
 
-    // Выполняем запрос
+    //  запрос
     $stmt->bindParam(':id', $id, PDO::PARAM_INT);
 
     if ($stmt->execute()) {

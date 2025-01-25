@@ -2,27 +2,27 @@
 require 'db.php'; // Подключение к БД
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    // Получаем название таблицы
+    // название таблицы
     $table = isset($_POST['table']) ? $_POST['table'] : '';
 
     if (empty($table)) {
         die("Ошибка: не указана таблица.");
     }
 
-    // Получаем список столбцов из базы данных
+    //  список столбцов из базы данных
     $query = $conn->prepare("SHOW COLUMNS FROM `$table`");
     $query->execute();
-    $columns = $query->fetchAll(PDO::FETCH_ASSOC); // Используем PDO::FETCH_ASSOC для вывода массива ассоциативных элементов
+    $columns = $query->fetchAll(PDO::FETCH_ASSOC); 
 
     if (!$columns) {
         die("Ошибка: таблица '$table' не найдена.");
     }
 
-    // Формируем массив с данными, которые соответствуют столбцам таблицы
+    //  массив с данными, которые соответствуют столбцам таблицы
     $data = array();
     $placeholders = array();
     foreach ($columns as $column) {
-        // Предполагаем, что название столбца хранится в $column['Field']
+        //  название столбца хранится в $column['Field']
         $column_name = $column['Field'];
         if (isset($_POST[$column_name])) {
             $data[$column_name] = $_POST[$column_name];
@@ -34,11 +34,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         die("Ошибка: нет данных для вставки.");
     }
 
-    // Формируем SQL-запрос
+    //  SQL-запрос
     $sql = "INSERT INTO `$table` (" . implode(", ", array_keys($data)) . ") VALUES (" . implode(", ", $placeholders) . ")";
     $stmt = $conn->prepare($sql); 
 
-    // Выполняем запрос
+    // запрос
     if ($stmt->execute($data)) {
         echo "Данные успешно добавлены в таблицу '$table'.";
     } else {

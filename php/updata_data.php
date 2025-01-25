@@ -6,16 +6,16 @@ error_reporting(E_ALL);
 require 'db.php'; // Подключение к БД
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    // Получаем название таблицы
+    //  название таблицы
     $table = isset($_POST['table']) ? $_POST['table'] : '';
-    $id = isset($_POST['id']) ? $_POST['id'] : ''; // Получаем id записи для редактирования
+    $id = isset($_POST['id']) ? $_POST['id'] : ''; //  id записи для редактирования
 
     if (empty($table) || empty($id)) {
         echo "Ошибка: не указана таблица или ID записи.";
         exit;
     }
 
-    // Получаем список столбцов из базы данных
+    //  список столбцов из базы данных
     $query = $conn->prepare("SHOW COLUMNS FROM `$table`");
     $query->execute();
     $columns = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -25,14 +25,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit;
     }
 
-    // Формируем массив с данными, которые соответствуют столбцам таблицы
+    //  массив с данными, которые соответствуют столбцам таблицы
     $data = array();
     $placeholders = array();
     foreach ($columns as $column) {
-        // Предполагаем, что название столбца хранится в $column['Field']
+        //  название столбца хранится в $column['Field']
         $column_name = $column['Field'];
 
-        // Для редактирования пропускаем столбец ID
+        
         if ($column_name != 'id' && isset($_POST[$column_name])) {
             $data[$column_name] = $_POST[$column_name];
             $placeholders[] = "$column_name = :$column_name";
@@ -44,14 +44,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit;
     }
 
-    // Формируем SQL-запрос для обновления
+    //  SQL-запрос для обновления
     $sql = "UPDATE `$table` SET " . implode(", ", $placeholders) . " WHERE id = :id";
     $stmt = $conn->prepare($sql);
 
-    // Добавляем id в массив данных
+    //  id в массив данных
     $data['id'] = $id;
 
-    // Выполняем запрос
+    //  запрос
     if ($stmt->execute($data)) {
         echo "Данные успешно обновлены в таблице '$table'.";
     } else {
